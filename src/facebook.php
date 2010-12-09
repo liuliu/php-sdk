@@ -346,7 +346,7 @@ class Facebook
       if (!$session && isset($_REQUEST['session'])) {
         $session = json_decode(
           get_magic_quotes_gpc()
-            ? stripslashes($_REQUEST['session'])
+            ? stripslashes(stripslashes($_REQUEST['session']))
             : $_REQUEST['session'],
           true
         );
@@ -415,8 +415,9 @@ class Facebook
    * @param Array $params provide custom parameters
    * @return String the URL for the login flow
    */
-  public function getLoginUrl($params=array()) {
-    $currentUrl = $this->getCurrentUrl();
+  public function getLoginUrl($currentUrl, $params=array()) {
+	if (!isset($currentUrl))
+		$currentUrl = $this->getCurrentUrl();
     return $this->getUrl(
       'www',
       'login.php',
@@ -424,7 +425,7 @@ class Facebook
         'api_key'         => $this->getAppId(),
         'cancel_url'      => $currentUrl,
         'display'         => 'page',
-        'fbconnect'       => 1,
+        'fbconnect'       => 0,
         'next'            => $currentUrl,
         'return_session'  => 1,
         'session_version' => 3,
